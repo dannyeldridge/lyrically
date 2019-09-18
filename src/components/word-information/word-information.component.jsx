@@ -4,7 +4,22 @@ class WordInformation extends React.Component {
     render() {
         return (
             <div>
-                <h1>{`Word: ${this.props.word}`}</h1>              
+                <div>
+                    <h3>{`Perfect rhymes:`}</h3>  
+                </div>
+                <div>
+                    {this.props.perfectRhymes.map(element => {      
+                        return <span>{`${element.word}, `}</span>
+                    })}             
+                </div>
+                <div>
+                    <h3>{`Near rhymes:`}</h3>  
+                </div>
+                <div>
+                    {this.props.nearRhymes.map(element => {      
+                        return <span>{`${element.word}, `}</span>
+                    })}             
+                </div>
             </div>
         )
     }
@@ -12,6 +27,4 @@ class WordInformation extends React.Component {
 
 export default WordInformation;
 
-// {this.props.data.map(element => {              
-//     return <span>{`${element.word}, `}</span>
-// })}
+

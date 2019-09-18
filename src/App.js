@@ -5,12 +5,12 @@ import '../node_modules/draft-js/dist/Draft.css'
 import '../node_modules/@blueprintjs/icons/lib/css/blueprint-icons.css'
 import '../node_modules/@blueprintjs/core/lib/css/blueprint.css'
 
-import WordContainer from './components/word-container/word-container.component';
+import MainContainer from './components/main-container/main-container.component';
 
 function App() {
   return (
-    <div>
-      <WordContainer />
+    <div className='app'>
+      <MainContainer />
     </div>
   );
 }

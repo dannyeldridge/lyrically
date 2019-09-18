@@ -1,8 +1,8 @@
 import React from 'react';
+import SearchBar from '../searchbar/searchbar.component';
+import WordInformation from '../word-information/word-information.component';
 
-// import WordInformation from '../word-information/word-information.component';
-// import WordToolbar from '../word-toolbar/word-toolbar.component';
-// import SearchBar from '../searchbar/searchbar.component';
+const datamuse = require('datamuse');
 
 class WordContainer extends React.Component {
     constructor() {
@@ -10,7 +10,8 @@ class WordContainer extends React.Component {
         this.state = {
             searchField: '',
             word: '',
-            rhymes: []
+            perfectRhymes: [],
+            nearRhymes: [],
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -19,44 +20,42 @@ class WordContainer extends React.Component {
     handleChange(event) {
         this.setState({
             searchField: event.target.value
+        }, () => {
+            console.log(this.state.searchField)
         })      
       }    
     
     handleSubmit(event) {
-        event.preventDefault();        
-        this.setState({
-            word: this.state.searchField
-        }, () => {
-        fetch(`https://rhymebrain.com/talk?function=getRhymes&word=${this.state.word}`)
-        .then(response => response.json())
-        .then(response => {
-            this.setState({ rhymes: response});
-            console.log(this.state.rhymes)
-        })})     
-    }    
+        event.preventDefault();
+        this.setState({ word: this.state.searchField }, 
+            () => {
+            Promise.all([
+                datamuse.request(`words?rel_rhy=${this.state.word}`),
+                datamuse.request(`words?rel_nry=${this.state.word}`) 
+            ])
+            .then(([json1, json2]) => this.setState({
+                perfectRhymes: json1,
+                nearRhymes: json2
+            }))
+        })
+    }  
 
     render() {
         return (
             <div>
-                <form onSubmit={this.handleSubmit}>
-                    <input 
-                        type="text" 
-                        value={this.searchField} 
-                        onChange={this.handleChange}
-                    />               
-                    <input type="submit" value="Submit" />
-                </form>                
-                <h1>{`Word: ${this.state.word}`}</h1>  
-                {this.state.rhymes.map(element => {      
-                    return <span>{`${element.word}, `}</span>
-                })}      
+                <SearchBar 
+                    handleSubmit={this.handleSubmit}
+                    handleChange={this.handleChange}
+                    searchField={this.searchField}
+                />               
+                <WordInformation
+                    word={this.state.word}
+                    perfectRhymes={this.state.perfectRhymes}
+                    nearRhymes={this.state.nearRhymes}
+                />
             </div>
         )
     }
 }
 
 export default WordContainer;
-
-// {this.props.data.map(element => {              
-//     return <span>{`${element.word}, `}</span>
-// })}
